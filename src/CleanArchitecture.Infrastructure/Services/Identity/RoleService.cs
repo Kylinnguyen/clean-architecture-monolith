@@ -3,7 +3,7 @@ using CleanArchitecture.Application.Interfaces.Services.Identity;
 using CleanArchitecture.Application.UseCases.Roles.Dtos.Requests;
 using CleanArchitecture.Application.UseCases.Roles.Dtos.Responses;
 using CleanArchitecture.Domain.Entities.Identities;
-using CleanArchitecture.Domain.Repositories.Identity;
+using CleanArchitecture.Domain.Repositories.Identities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 

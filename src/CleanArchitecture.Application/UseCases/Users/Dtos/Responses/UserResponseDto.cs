@@ -6,7 +6,7 @@ public class UserResponseDto
 {
     public string AccessToken { get; set; } = string.Empty;
     public string RefreshToken { get; set; } = string.Empty;
-    public List<string> Roles { get; set; }
+    // public List<string> Roles { get; set; }
     public UserInfoDto User { get; set; } = new();
 }
 

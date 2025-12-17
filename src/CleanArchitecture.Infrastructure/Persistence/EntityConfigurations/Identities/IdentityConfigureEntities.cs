@@ -13,6 +13,7 @@ public static class IdentityConfigureEntities
             entity.HasKey(x => x.Id);
             entity.HasIndex(x => x.UserName).IsUnique();
             entity.HasIndex(x => x.Email).IsUnique();
+            entity.Property(x => x.DateOfBirth).HasColumnType("date");
 
         });
 
@@ -73,6 +74,22 @@ public static class IdentityConfigureEntities
                 .HasOne(x => x.Role)
                 .WithMany(x => x.UserRoles)
                 .HasForeignKey(x => x.RoleId);
+        });
+
+        modelBuilder.Entity<RefreshToken>(entity =>
+        {
+            entity.ToTable(nameof(RefreshToken), SchemaDbConstants.Auth);
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.Id).ValueGeneratedOnAdd();
+
+            entity.HasIndex(x => new { x.TokenHash, x.UserId }).IsUnique();
+
+            
+            entity.HasOne(x => x.User)
+                .WithMany(x => x.RefreshTokens)
+                .HasForeignKey(x => x.UserId);
+
+            entity.Property(x => x.TokenHash).HasMaxLength(255);
         });
         return modelBuilder;
     }

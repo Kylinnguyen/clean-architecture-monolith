@@ -1,12 +1,10 @@
-﻿using System.Security.Claims;
-using CleanArchitecture.Application.Common.Exceptions;
+﻿using CleanArchitecture.Application.Common.Exceptions;
 using CleanArchitecture.Application.Interfaces.Services.Identity;
 using CleanArchitecture.Application.Interfaces.Services.Token;
 using CleanArchitecture.Application.UseCases.Users.Dtos.Requests;
 using CleanArchitecture.Application.UseCases.Users.Dtos.Responses;
 using CleanArchitecture.Domain.Entities.Identities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.JsonWebTokens;
 
 namespace CleanArchitecture.Infrastructure.Services.Identity;
 
@@ -47,7 +45,7 @@ public class AuthService : IAuthService
         return true;
     }
 
-    public async Task<UserResponseDto> LoginAsync(LoginRequestDto request, CancellationToken cancellationToke = default)
+    public async Task<UserResponseDto> LoginAsync(LoginRequestDto request, CancellationToken cancellationToken = default)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
@@ -60,28 +58,15 @@ public class AuthService : IAuthService
         {
             throw new UnauthorizedException("Wrong email or password");
         }
-    
-        var roles = await _userManager.GetRolesAsync(user);
-        // Generate tokens
-        var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-            new(JwtRegisteredClaimNames.PhoneNumber, user.PhoneNumber ?? string.Empty),
-            new(JwtRegisteredClaimNames.Email, user.Email),
-            new(JwtRegisteredClaimNames.UniqueName, user?.UserName),
-            new(JwtRegisteredClaimNames.Birthdate, user?.DateOfBirth.ToShortDateString() ?? string.Empty)
-        };
-        claims.AddRange(roles.Select(r => new Claim(ClaimTypes.Role, r)));
-      
-        var accessToken = _tokenService.GenerateAccessToken(claims);
-        var refreshToken = _tokenService.GenerateRefreshToken();
+
+        var accessToken = await _tokenService.CreateAccessTokenAsync(user, cancellationToken);
+        var refreshToken = await _tokenService.CreateRefreshTokenAsync(user, cancellationToken);
 
         var userResponseDto = new UserResponseDto
         {
             AccessToken = accessToken,
             RefreshToken = refreshToken,
-            Roles = roles.ToList(),
+            // Roles = roles.ToList(),
             User = new UserInfoDto
             {
                 Id = user.Id,
@@ -94,9 +79,9 @@ public class AuthService : IAuthService
         return userResponseDto;
     }
 
-    public async Task<IdentityResult> LogoutAsync()
+    public async Task<IdentityResult> LogoutAsync(string refreshToken)
     {
-        //TODO: revoke token
+        await _tokenService.RevokeRefreshTokenAsync(refreshToken);
         await _signInManager.SignOutAsync();
         return IdentityResult.Success;
     }

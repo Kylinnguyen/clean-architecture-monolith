@@ -4,6 +4,7 @@ using CleanArchitecture.Application.Constants;
 using CleanArchitecture.WebAPI.Common;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 
 namespace CleanArchitecture.WebAPI.ExceptionHandlers;
 
@@ -27,6 +28,8 @@ public class GlobalExceptionHandler : IExceptionHandler
         {
             NotFoundException ex => (StatusCodes.Status404NotFound, ex.Message, ex.ErrorCode),
             UnauthorizedException ex => (StatusCodes.Status401Unauthorized, ex.Message, ex.ErrorCode),
+            UnauthorizedAccessException ex => (StatusCodes.Status401Unauthorized, ex.Message, ErrorCodeConstants.UNAUTHORIZED),
+            SecurityTokenException ex =>  (StatusCodes.Status401Unauthorized, ex.Message, ErrorCodeConstants.UNAUTHORIZED), 
             ForbiddenAccessException ex => (StatusCodes.Status403Forbidden, ex.Message, ex.ErrorCode),
             BadRequestException ex => (StatusCodes.Status400BadRequest, ex.Message, ex.ErrorCode),
             BusinessException ex => (StatusCodes.Status400BadRequest, ex.Message, ex.ErrorCode),

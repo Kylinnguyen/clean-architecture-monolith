@@ -1,9 +1,11 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using CleanArchitecture.Domain.Common.Core.BaseEntities;
 using CleanArchitecture.Domain.Repositories;
-using CleanArchitecture.Domain.Repositories.Identity;
+using CleanArchitecture.Domain.Repositories.Identities;
+using CleanArchitecture.Domain.Repositories.Tokens;
 using CleanArchitecture.Infrastructure.Repositories;
-using CleanArchitecture.Infrastructure.Repositories.Identity;
+using CleanArchitecture.Infrastructure.Repositories.Identities;
+using CleanArchitecture.Infrastructure.Repositories.Tokens;
 
 namespace CleanArchitecture.Infrastructure.Extensions;
 
@@ -18,5 +20,6 @@ public static class RepositoryCollectionExtensions
         // Register specific repositories
         services.AddTransient<IUserRepository, UserRepository>();
         services.AddTransient<IRoleRepository, RoleRepository>();
+        services.AddTransient<IRefreshTokenRepository, RefreshTokenRepository>();
     }
 }

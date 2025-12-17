@@ -105,6 +105,7 @@ builder.Services.AddApplication();
 // Register services
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ITokenHelper, TokenHelper>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork<ApplicationDbContext>>();
 
@@ -142,18 +143,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(x =>
-    {
-        x.SwaggerEndpoint("/swagger/v1/swagger.json", "CleanArchitecture API v1");
-        x.DisplayRequestDuration();
-    });
-    app.UseMiniProfiler();
-}
-
 // Middleware pipeline
 app.UseMiddleware<ValidationExceptionMiddleware>();
 
@@ -168,6 +157,19 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI(x =>
+    {
+        x.SwaggerEndpoint("/swagger/v1/swagger.json", "CleanArchitecture API v1");
+        x.DisplayRequestDuration();
+        x.ConfigObject.AdditionalItems["persistAuthorization"] = true;
+    });
+    app.UseMiniProfiler();
+}
 
 // Map endpoints
 app.MapControllers();

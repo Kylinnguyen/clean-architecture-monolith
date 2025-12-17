@@ -7,12 +7,13 @@ public class User : IdentityUser<Guid>, IFullAuditableEntity<Guid>
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }
-    public DateTime DateOfBirth { get; set; }
+    public DateTime? DateOfBirth { get; set; }
     public bool IsActive { get; set; }
 
     #region References
 
     public ICollection<UserRole> UserRoles { get; set; } = new List<UserRole>();
+    public ICollection<RefreshToken>  RefreshTokens { get; set; } = new List<RefreshToken>();
 
     #endregion
 

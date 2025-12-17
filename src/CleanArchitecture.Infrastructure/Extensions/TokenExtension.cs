@@ -28,13 +28,13 @@ public static class TokenExtension
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
+                    ClockSkew =  TimeSpan.Zero,
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSetting?.Issuer,
                     ValidAudience = jwtSetting?.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(
                         Encoding.ASCII.GetBytes(jwtSetting?.Secret)
                     ),
-                    
                     NameClaimType = JwtRegisteredClaimNames.UniqueName
                 };
             });
